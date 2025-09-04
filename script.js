@@ -151,7 +151,7 @@ class ParticleSystem {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.particles = [];
-    this.maxParticles = 50;
+    this.maxParticles = isMobile() ? 15 : 50;
     
     this.resize();
     this.createParticles();
@@ -275,9 +275,18 @@ function initSoundToggle() {
   });
 }
 
-// Enhanced loading sequence
+// Mobile detection and optimization
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+}
+
+// Enhanced loading sequence with mobile optimization
 window.addEventListener("load", () => {
-  for (let i = 0; i < 10; i++) {
+  const mobile = isMobile();
+  
+  // Reduce particle count on mobile
+  const particleCount = mobile ? 3 : 10;
+  for (let i = 0; i < particleCount; i++) {
     setTimeout(createParticle, i * 100);
   }
   
@@ -285,14 +294,16 @@ window.addEventListener("load", () => {
     document.getElementById("loading").style.display = "none";
     document.getElementById("main").classList.remove("hidden");
     
-    // Initialize particle system
+    // Initialize particle system with mobile optimization
     const particleCanvas = document.getElementById('particle-canvas');
-    if (particleCanvas) {
+    if (particleCanvas && !mobile) {
       new ParticleSystem(particleCanvas);
     }
     
-    // Initialize cursor trail
-    new CursorTrail();
+    // Initialize cursor trail only on desktop
+    if (!mobile && typeof CursorTrail !== 'undefined') {
+      new CursorTrail();
+    }
     
     // Initialize magnetic button
     initMagneticButton();
@@ -308,7 +319,7 @@ window.addEventListener("load", () => {
     // Start word-by-word animation for intro
     const introElement = document.getElementById('animated-intro');
     setTimeout(() => {
-      animateWordsWithDelay(introElement, "An unforgettable night awaits you at Celestia'25, where stars meet celebration and memories shine bright.", 150);
+      animateWordsWithDelay(introElement, "An unforgettable night awaits you at Celestia'25, where stars meet celebration and memories shine bright.", mobile ? 100 : 150);
     }, 2500);
     
     // Animate subtitle
@@ -318,11 +329,15 @@ window.addEventListener("load", () => {
       subtitleElement.style.transform = 'translateX(0)';
     }, 1500);
     
-  }, 3000);
+  }, mobile ? 2000 : 3000);
 });
 
-// Create particles continuously
-setInterval(createParticle, 300);
+// Create particles continuously with mobile optimization
+if (!isMobile()) {
+  setInterval(createParticle, 300);
+} else {
+  setInterval(createParticle, 800);
+}
 
 // Advanced interaction system
 document.addEventListener('DOMContentLoaded', () => {
@@ -345,6 +360,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   
   function updateParallax() {
+    if (isMobile()) return; // Disable parallax on mobile for performance
+    
     mouseX += (targetX - mouseX) * 0.1;
     mouseY += (targetY - mouseY) * 0.1;
     
