@@ -280,12 +280,53 @@ function isMobile() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 }
 
+// Prevent flickering by disabling problematic features on mobile
+function optimizeForMobile() {
+  if (isMobile()) {
+    // Disable hardware acceleration that can cause flickering
+    document.body.style.transform = 'none';
+    document.body.style.webkitTransform = 'none';
+    
+    // Disable all particle effects
+    const particleCanvas = document.getElementById('particle-canvas');
+    if (particleCanvas) {
+      particleCanvas.style.display = 'none';
+    }
+    
+    // Disable cursor canvas
+    const cursorCanvas = document.getElementById('cursor-canvas');
+    if (cursorCanvas) {
+      cursorCanvas.style.display = 'none';
+    }
+    
+    // Force disable all animations
+    const style = document.createElement('style');
+    style.textContent = `
+      @media (max-width: 768px) {
+        *, *::before, *::after {
+          animation-duration: 0s !important;
+          animation-delay: 0s !important;
+          transition-duration: 0.1s !important;
+          transform: none !important;
+        }
+        .bg-effects * {
+          animation: none !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
 // Enhanced loading sequence with mobile optimization
 window.addEventListener("load", () => {
   const mobile = isMobile();
   
-  // Reduce particle count on mobile
-  const particleCount = mobile ? 3 : 10;
+  // Apply mobile optimizations immediately
+  optimizeForMobile();
+  
+  // Drastically reduce particle count on mobile to prevent flickering
+  const particleCount = mobile ? 0 : 10;
   for (let i = 0; i < particleCount; i++) {
     setTimeout(createParticle, i * 100);
   }
@@ -294,15 +335,17 @@ window.addEventListener("load", () => {
     document.getElementById("loading").style.display = "none";
     document.getElementById("main").classList.remove("hidden");
     
-    // Initialize particle system with mobile optimization
-    const particleCanvas = document.getElementById('particle-canvas');
-    if (particleCanvas && !mobile) {
-      new ParticleSystem(particleCanvas);
-    }
-    
-    // Initialize cursor trail only on desktop
-    if (!mobile && typeof CursorTrail !== 'undefined') {
-      new CursorTrail();
+    // Only initialize particle system on desktop
+    if (!mobile) {
+      const particleCanvas = document.getElementById('particle-canvas');
+      if (particleCanvas) {
+        new ParticleSystem(particleCanvas);
+      }
+      
+      // Initialize cursor trail only on desktop
+      if (typeof CursorTrail !== 'undefined') {
+        new CursorTrail();
+      }
     }
     
     // Initialize magnetic button
@@ -311,33 +354,46 @@ window.addEventListener("load", () => {
     // Initialize sound toggle
     initSoundToggle();
     
-    // Animate letters
-    setTimeout(() => {
-      animateLetters();
-    }, 500);
+    // Animate letters only on desktop to prevent flickering
+    if (!mobile) {
+      setTimeout(() => {
+        animateLetters();
+      }, 500);
+    }
     
-    // Start word-by-word animation for intro
+    // Start word-by-word animation for intro (simplified on mobile)
     const introElement = document.getElementById('animated-intro');
-    setTimeout(() => {
-      animateWordsWithDelay(introElement, "An unforgettable night awaits you at Celestia'25, where stars meet celebration and memories shine bright.", mobile ? 100 : 150);
-    }, 2500);
+    if (introElement) {
+      setTimeout(() => {
+        if (mobile) {
+          // Simple fade-in on mobile instead of complex animation
+          introElement.textContent = "An unforgettable night awaits you at Celestia'25, where stars meet celebration and memories shine bright.";
+          introElement.style.opacity = '1';
+        } else {
+          animateWordsWithDelay(introElement, "An unforgettable night awaits you at Celestia'25, where stars meet celebration and memories shine bright.", 150);
+        }
+      }, mobile ? 1000 : 2500);
+    }
     
-    // Animate subtitle
+    // Animate subtitle (simplified on mobile)
     const subtitleElement = document.getElementById('animated-subtitle');
-    setTimeout(() => {
-      subtitleElement.style.opacity = '1';
-      subtitleElement.style.transform = 'translateX(0)';
-    }, 1500);
+    if (subtitleElement) {
+      setTimeout(() => {
+        subtitleElement.style.opacity = '1';
+        if (!mobile) {
+          subtitleElement.style.transform = 'translateX(0)';
+        }
+      }, mobile ? 800 : 1500);
+    }
     
-  }, mobile ? 2000 : 3000);
+  }, mobile ? 1000 : 3000);
 });
 
 // Create particles continuously with mobile optimization
 if (!isMobile()) {
   setInterval(createParticle, 300);
-} else {
-  setInterval(createParticle, 800);
 }
+// Completely disable particle creation on mobile to prevent flickering
 
 // Advanced interaction system
 document.addEventListener('DOMContentLoaded', () => {
@@ -350,43 +406,43 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     animateSubtitle();
   }, 1500);
-  // Enhanced parallax with smooth interpolation
-  let mouseX = 0, mouseY = 0;
-  let targetX = 0, targetY = 0;
-  
-  document.addEventListener('mousemove', (e) => {
-    targetX = (e.clientX / window.innerWidth - 0.5) * 2;
-    targetY = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-  
-  function updateParallax() {
-    if (isMobile()) return; // Disable parallax on mobile for performance
+  // Enhanced parallax with smooth interpolation (desktop only)
+  if (!isMobile()) {
+    let mouseX = 0, mouseY = 0;
+    let targetX = 0, targetY = 0;
     
-    mouseX += (targetX - mouseX) * 0.1;
-    mouseY += (targetY - mouseY) * 0.1;
-    
-    const card = document.querySelector('.main-card');
-    const shapes = document.querySelectorAll('.shape');
-    const aurora = document.querySelector('.aurora');
-    
-    if (card) {
-      card.style.transform = `perspective(1000px) rotateY(${mouseX * 3}deg) rotateX(${mouseY * -3}deg)`;
-    }
-    
-    if (aurora) {
-      aurora.style.transform = `translate(${mouseX * 20}px, ${mouseY * 20}px) rotate(${mouseX * 2}deg)`;
-    }
-    
-    shapes.forEach((shape, index) => {
-      const speed = (index + 1) * 0.3;
-      const currentTransform = shape.style.transform || '';
-      const baseTransform = currentTransform.split('translate')[0];
-      shape.style.transform = baseTransform + ` translate(${mouseX * speed * 10}px, ${mouseY * speed * 10}px)`;
+    document.addEventListener('mousemove', (e) => {
+      targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+      targetY = (e.clientY / window.innerHeight - 0.5) * 2;
     });
     
-    requestAnimationFrame(updateParallax);
+    function updateParallax() {
+      mouseX += (targetX - mouseX) * 0.1;
+      mouseY += (targetY - mouseY) * 0.1;
+      
+      const card = document.querySelector('.main-card');
+      const shapes = document.querySelectorAll('.shape');
+      const aurora = document.querySelector('.aurora');
+      
+      if (card) {
+        card.style.transform = `perspective(1000px) rotateY(${mouseX * 3}deg) rotateX(${mouseY * -3}deg)`;
+      }
+      
+      if (aurora) {
+        aurora.style.transform = `translate(${mouseX * 20}px, ${mouseY * 20}px) rotate(${mouseX * 2}deg)`;
+      }
+      
+      shapes.forEach((shape, index) => {
+        const speed = (index + 1) * 0.3;
+        const currentTransform = shape.style.transform || '';
+        const baseTransform = currentTransform.split('translate')[0];
+        shape.style.transform = baseTransform + ` translate(${mouseX * speed * 10}px, ${mouseY * speed * 10}px)`;
+      });
+      
+      requestAnimationFrame(updateParallax);
+    }
+    updateParallax();
   }
-  updateParallax();
   
   // Enhanced button interactions with sound toggle
   const btn = document.querySelector('.magnetic-btn');
@@ -468,32 +524,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  // Ambient background animation
-  function createAmbientParticle() {
-    const particle = document.createElement('div');
-    particle.style.cssText = `
-      position: fixed;
-      width: 1px;
-      height: 1px;
-      background: rgba(255,255,255,${Math.random() * 0.5 + 0.1});
-      pointer-events: none;
-      z-index: 1;
-      left: ${Math.random() * 100}vw;
-      top: 100vh;
-    `;
+  // Ambient background animation (desktop only)
+  if (!isMobile()) {
+    function createAmbientParticle() {
+      const particle = document.createElement('div');
+      particle.style.cssText = `
+        position: fixed;
+        width: 1px;
+        height: 1px;
+        background: rgba(255,255,255,${Math.random() * 0.5 + 0.1});
+        pointer-events: none;
+        z-index: 1;
+        left: ${Math.random() * 100}vw;
+        top: 100vh;
+      `;
+      
+      document.body.appendChild(particle);
+      
+      particle.animate([
+        { transform: 'translateY(0px)', opacity: 0 },
+        { transform: 'translateY(-20px)', opacity: 1 },
+        { transform: 'translateY(-100vh)', opacity: 0 }
+      ], {
+        duration: Math.random() * 8000 + 5000,
+        easing: 'linear'
+      }).onfinish = () => particle.remove();
+    }
     
-    document.body.appendChild(particle);
-    
-    particle.animate([
-      { transform: 'translateY(0px)', opacity: 0 },
-      { transform: 'translateY(-20px)', opacity: 1 },
-      { transform: 'translateY(-100vh)', opacity: 0 }
-    ], {
-      duration: Math.random() * 8000 + 5000,
-      easing: 'linear'
-    }).onfinish = () => particle.remove();
+    // Create ambient particles periodically
+    setInterval(createAmbientParticle, 200);
   }
-  
-  // Create ambient particles periodically
-  setInterval(createAmbientParticle, 200);
 });
