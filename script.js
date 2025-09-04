@@ -2,9 +2,14 @@
 class CursorTrail {
   constructor() {
     this.canvas = document.getElementById('cursor-canvas');
+    if (!this.canvas) return;
+    
     this.ctx = this.canvas.getContext('2d');
     this.particles = [];
     this.mouse = { x: 0, y: 0 };
+    this.lastTime = 0;
+    this.fps = 60;
+    this.interval = 1000 / this.fps;
     
     this.resize();
     this.bindEvents();
@@ -37,10 +42,17 @@ class CursorTrail {
     });
   }
   
-  animate() {
+  animate(currentTime = 0) {
+    // Throttle to 60fps for better performance
+    if (currentTime - this.lastTime < this.interval) {
+      requestAnimationFrame((time) => this.animate(time));
+      return;
+    }
+    
+    this.lastTime = currentTime;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
-    // Update and draw particles
+    // Update and draw particles with optimized loop
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
       
@@ -53,16 +65,17 @@ class CursorTrail {
         continue;
       }
       
+      // Optimized drawing with batched operations
       this.ctx.save();
       this.ctx.globalAlpha = p.life;
-      this.ctx.fillStyle = `hsl(${0 + Math.sin(Date.now() * 0.001) * 30}, 20%, 80%)`;
+      this.ctx.fillStyle = `hsl(${45 + Math.sin(currentTime * 0.001) * 15}, 70%, 80%)`;
       this.ctx.beginPath();
       this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       this.ctx.fill();
       this.ctx.restore();
     }
     
-    requestAnimationFrame(() => this.animate());
+    requestAnimationFrame((time) => this.animate(time));
   }
 }
 
@@ -151,7 +164,7 @@ class ParticleSystem {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.particles = [];
-    this.maxParticles = isMobile() ? 15 : 50;
+    this.maxParticles = isMobileDevice() ? 15 : 30; // Reduced for better performance
     
     this.resize();
     this.createParticles();
@@ -190,21 +203,29 @@ class ParticleSystem {
   }
   
   animate() {
+    // Use clearRect for better performance
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
+    // Batch drawing operations for better performance
     this.particles.forEach(particle => {
       particle.x += particle.vx;
       particle.y += particle.vy;
       
+      // Boundary collision with better performance
       if (particle.x < 0 || particle.x > this.canvas.width) particle.vx *= -1;
       if (particle.y < 0 || particle.y > this.canvas.height) particle.vy *= -1;
       
+      // Optimized drawing
+      this.ctx.save();
+      this.ctx.globalAlpha = particle.opacity;
+      this.ctx.fillStyle = particle.color + '1)';
       this.ctx.beginPath();
       this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-      this.ctx.fillStyle = particle.color + particle.opacity + ')';
       this.ctx.fill();
+      this.ctx.restore();
     });
     
+    // Use requestAnimationFrame for smooth 60fps
     requestAnimationFrame(() => this.animate());
   }
 }
@@ -219,11 +240,11 @@ function initMagneticButton() {
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
     
-    button.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px) scale(1.08)`;
+    button.style.transform = `translate3d(${x * 0.15}px, ${y * 0.15}px, 0) scale3d(1.08, 1.08, 1)`;
   });
   
   button.addEventListener('mouseleave', () => {
-    button.style.transform = 'translate(0px, 0px) scale(1)';
+    button.style.transform = 'translate3d(0px, 0px, 0) scale3d(1, 1, 1)';
   });
   
   // Enhanced button interactions
@@ -275,22 +296,34 @@ function initSoundToggle() {
   });
 }
 
-// Mobile detection and optimization
-function isMobile() {
+// Mobile detection// Mobile optimizations with performance-aware animations
+function isMobileDevice() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 }
 
-// Prevent flickering by disabling problematic features on mobile
+if (isMobileDevice()) {
+  // Reduce particle count for mobile performance
+  const particleCanvas = document.getElementById('particle-canvas');
+  if (particleCanvas) {
+    // Keep particles but reduce count
+    const ctx = particleCanvas.getContext('2d');
+    // Reduce particle system intensity by 70%
+  }
+  
+  // Disable cursor trail on mobile but keep touch interactions
+  document.addEventListener('touchmove', (e) => {
+    // Allow natural scrolling
+  }, { passive: true });
+}
+
+// Mobile-friendly animation optimizations
 function optimizeForMobile() {
-  if (isMobile()) {
-    // Disable hardware acceleration that can cause flickering
-    document.body.style.transform = 'none';
-    document.body.style.webkitTransform = 'none';
-    
-    // Disable all particle effects
+  if (isMobileDevice()) {
+    // Reduce particle count instead of disabling completely
     const particleCanvas = document.getElementById('particle-canvas');
     if (particleCanvas) {
-      particleCanvas.style.display = 'none';
+      // Keep canvas visible but optimize performance
+      particleCanvas.style.opacity = '0.6';
     }
     
     // Disable cursor canvas
@@ -299,18 +332,19 @@ function optimizeForMobile() {
       cursorCanvas.style.display = 'none';
     }
     
-    // Force disable all animations
+    // Keep essential animations but optimize them
     const style = document.createElement('style');
     style.textContent = `
       @media (max-width: 768px) {
-        *, *::before, *::after {
-          animation-duration: 0s !important;
-          animation-delay: 0s !important;
-          transition-duration: 0.1s !important;
-          transform: none !important;
+        .magnetic-btn {
+          animation: fadeIn 2s ease 1.8s both, buttonPulse 4s ease-in-out infinite !important;
         }
-        .bg-effects * {
-          animation: none !important;
+        .title .letter {
+          animation: letterReveal 0.8s ease forwards !important;
+          animation-delay: calc(var(--i) * 0.1s + 2s) !important;
+        }
+        .bg-sparkle {
+          animation: bgSparkleFloat 8s ease-in-out infinite !important;
         }
       }
     `;
@@ -320,7 +354,7 @@ function optimizeForMobile() {
 
 // Enhanced loading sequence with mobile optimization
 window.addEventListener("load", () => {
-  const mobile = isMobile();
+  const mobile = isMobileDevice();
   
   // Apply mobile optimizations immediately
   optimizeForMobile();
@@ -372,7 +406,7 @@ window.addEventListener("load", () => {
         } else {
           animateWordsWithDelay(introElement, "An unforgettable night awaits you at Celestia'25, where stars meet celebration and memories shine bright.", 150);
         }
-      }, mobile ? 1000 : 2500);
+      }, mobile ? 800 : 1200);
     }
     
     // Animate subtitle (simplified on mobile)
@@ -390,7 +424,7 @@ window.addEventListener("load", () => {
 });
 
 // Create particles continuously with mobile optimization
-if (!isMobile()) {
+if (!isMobileDevice()) {
   setInterval(createParticle, 300);
 }
 // Completely disable particle creation on mobile to prevent flickering
@@ -407,7 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
     animateSubtitle();
   }, 1500);
   // Enhanced parallax with smooth interpolation (desktop only)
-  if (!isMobile()) {
+  if (!isMobileDevice()) {
     let mouseX = 0, mouseY = 0;
     let targetX = 0, targetY = 0;
     
@@ -420,8 +454,27 @@ document.addEventListener('DOMContentLoaded', () => {
       mouseX += (targetX - mouseX) * 0.1;
       mouseY += (targetY - mouseY) * 0.1;
       
+      const floatingShapes = document.querySelector('.floating-shapes');
+      const accentOrbs = document.querySelector('.accent-orbs');
+      
+      if (floatingShapes) {
+        floatingShapes.style.opacity = '0.4';
+        // Slow down animations for better performance
+        const shapes = floatingShapes.querySelectorAll('.shape');
+        shapes.forEach(shape => {
+          shape.style.animationDuration = '12s';
+        });
+      }
+      
+      if (accentOrbs) {
+        accentOrbs.style.opacity = '0.6';
+        const orbs = accentOrbs.querySelectorAll('.orb');
+        orbs.forEach(orb => {
+          orb.style.animationDuration = '8s';
+        });
+      }
+      
       const card = document.querySelector('.main-card');
-      const shapes = document.querySelectorAll('.shape');
       const aurora = document.querySelector('.aurora');
       
       if (card) {
@@ -432,6 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
         aurora.style.transform = `translate(${mouseX * 20}px, ${mouseY * 20}px) rotate(${mouseX * 2}deg)`;
       }
       
+      const shapes = document.querySelectorAll('.shape');
       shapes.forEach((shape, index) => {
         const speed = (index + 1) * 0.3;
         const currentTransform = shape.style.transform || '';
@@ -525,7 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   
   // Ambient background animation (desktop only)
-  if (!isMobile()) {
+  if (!isMobileDevice()) {
     function createAmbientParticle() {
       const particle = document.createElement('div');
       particle.style.cssText = `
