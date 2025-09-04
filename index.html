@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Celestia'25</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="loading">
+    <h1>Celestia'25 Loading<span class="dots">...</span></h1>
+    <div class="loader-lines">
+      <div></div><div></div><div></div>
+    </div>
+  </div>
+
+  <div id="main" class="hidden">
+    <!-- Advanced background effects -->
+    <div class="bg-effects">
+      <div class="aurora"></div>
+      <div class="mesh-gradient"></div>
+      <div class="cosmic-dust"></div>
+      <div class="nebula-clouds"></div>
+    </div>
+    
+    <!-- Floating geometric shapes -->
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+      <div class="shape shape-5"></div>
+      <div class="shape shape-6"></div>
+      <div class="shape shape-7"></div>
+      <div class="shape shape-8"></div>
+    </div>
+    
+    <!-- Constellation lines -->
+    <div class="constellation-lines">
+      <svg class="constellation-svg" viewBox="0 0 1920 1080">
+        <path class="constellation-path" d="M200,300 L400,200 L600,350 L800,250 L1000,400" stroke="rgba(255,215,0,0.3)" stroke-width="1" fill="none"/>
+        <path class="constellation-path" d="M300,600 L500,500 L700,650 L900,550" stroke="rgba(255,182,193,0.3)" stroke-width="1" fill="none"/>
+        <path class="constellation-path" d="M1200,200 L1400,300 L1600,150 L1800,250" stroke="rgba(135,206,235,0.3)" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+    
+    <!-- Animated content flow -->
+    <div class="content-stage">
+      <!-- Standout accent elements -->
+      <div class="accent-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+      </div>
+      
+      <!-- Floating sparkles -->
+      <div class="sparkle-container">
+        <div class="sparkle sparkle-1">✨</div>
+        <div class="sparkle sparkle-2">⭐</div>
+        <div class="sparkle sparkle-3">✨</div>
+        <div class="sparkle sparkle-4">⭐</div>
+        <div class="sparkle sparkle-5">✨</div>
+      </div>
+      
+      <div class="content-flow">
+        <div class="title-wrapper">
+          <div class="title-decoration">
+            <div class="title-line left"></div>
+            <div class="title-star">✦</div>
+            <div class="title-line right"></div>
+          </div>
+          <h1 class="title" id="animated-title">
+            <span class="letter">C</span><span class="letter">e</span><span class="letter">l</span><span class="letter">e</span><span class="letter">s</span><span class="letter">t</span><span class="letter">i</span><span class="letter">a</span><span class="letter">'</span><span class="letter">2</span><span class="letter">5</span>
+          </h1>
+          <div class="title-glow-effect"></div>
+        </div>
+        
+        <div class="subtitle-wrapper">
+          <p class="subtitle" id="animated-subtitle">Where Dreams Meet Reality</p>
+        </div>
+        
+        <div class="intro-wrapper">
+          <p class="intro" id="animated-intro"></p>
+        </div>
+        
+        <div class="action-wrapper">
+          <div class="cta-container">
+            <a href="https://forms.gle/H9TGUXd9tRy6yY9V6" target="_blank" class="magnetic-btn">
+              <span class="btn-text">Join The Experience</span>
+              <div class="btn-glow"></div>
+              <div class="btn-particles"></div>
+              <div class="btn-ripple"></div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Interactive cursor trail -->
+    <canvas id="cursor-canvas"></canvas>
+    
+    <!-- Enhanced UI Elements -->
+    <div class="ui-elements">
+      <!-- Ambient sound toggle -->
+      <div class="sound-toggle" id="sound-toggle">
+        <div class="sound-icon">♪</div>
+        <div class="sound-waves">
+          <div class="wave"></div>
+          <div class="wave"></div>
+          <div class="wave"></div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Particle system canvas -->
+  <canvas id="particle-canvas"></canvas>
+  
+  <script src="script.js"></script>
+</body>
+</html>
