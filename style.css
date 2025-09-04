@@ -15,8 +15,8 @@ body {
   background: linear-gradient(135deg, #1a0f2e 0%, #2d1b3d 25%, #3e2a5c 50%, #2a1f3d 75%, #1f1635 100%);
   color: #fff;
   text-align: center;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
   position: relative;
 }
 
@@ -159,7 +159,7 @@ body::before {
   position: relative;
   z-index: 2;
   padding: 20px;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -433,7 +433,7 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 100%;
   padding: 40px 20px;
 }
 
@@ -1284,8 +1284,8 @@ body::before {
 /* Mobile Responsive Design */
 @media (max-width: 768px) {
   body {
-    overflow-x: hidden;
-    min-height: 100vh;
+    overflow: hidden;
+    height: 100vh;
     /* Prevent flickering by optimizing rendering */
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
@@ -1297,7 +1297,7 @@ body::before {
   
   #main {
     padding: 15px;
-    min-height: 100vh;
+    height: 100vh;
     /* Hardware acceleration for smoother performance */
     will-change: transform;
     transform: translateZ(0);
