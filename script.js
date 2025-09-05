@@ -352,75 +352,489 @@ function optimizeForMobile() {
   }
 }
 
+// Countdown Timer Functionality
+function initCountdownTimer() {
+  // Set the event date - you can modify this date
+  const eventDate = new Date('2024-12-31T20:00:00').getTime(); // Example: Dec 31, 2024 8:00 PM
+  
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = eventDate - now;
+    
+    if (distance > 0) {
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      
+      document.getElementById('days').textContent = days.toString().padStart(2, '0');
+      document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+      document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+    } else {
+      // Event has started
+      document.getElementById('days').textContent = '00';
+      document.getElementById('hours').textContent = '00';
+      document.getElementById('minutes').textContent = '00';
+      document.querySelector('.countdown-title').textContent = 'The party has begun!';
+    }
+  }
+  
+  // Update immediately and then every minute
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+}
+
+// Modal functionality
+function initModal() {
+  const mainBtn = document.getElementById('main-btn');
+  const registrationBtn = document.getElementById('registration-btn');
+  const modalOverlay = document.getElementById('modal-overlay');
+  const modalClose = document.getElementById('modal-close');
+  const cancelBtn = document.getElementById('cancel-btn');
+  const formBtn = document.getElementById('form-btn');
+  
+  // Main button modal functionality
+  if (mainBtn && modalOverlay) {
+    mainBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      modalOverlay.classList.add('active');
+      
+      // Create sparkle effect
+      createSparkleEffect(e.target);
+    });
+  }
+  
+  // Registration button functionality
+  if (registrationBtn && modalOverlay) {
+    registrationBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!registrationBtn.disabled) {
+        // Open the same modal as main button
+        modalOverlay.classList.add('active');
+        
+        // Create sparkle effect
+        createSparkleEffect(e.target);
+      }
+    });
+  }
+  
+  if (modalOverlay) {
+    // Close modal handlers
+    [modalClose, cancelBtn].forEach(btn => {
+      if (btn) {
+        btn.addEventListener('click', () => {
+          modalOverlay.classList.remove('active');
+        });
+      }
+    });
+    
+    // Close on overlay click
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.classList.remove('active');
+      }
+    });
+    
+    // Form button with delay
+    if (formBtn) {
+      formBtn.addEventListener('click', () => {
+        // Add some cosmic effect before redirect
+        createCosmicExplosion();
+        setTimeout(() => {
+          modalOverlay.classList.remove('active');
+        }, 500);
+      });
+    }
+  }
+}
+
+// Create sparkle effect for button clicks
+function createSparkleEffect(element) {
+  const rect = element.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  
+  for (let i = 0; i < 15; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.style.cssText = `
+      position: fixed;
+      width: ${Math.random() * 8 + 4}px;
+      height: ${Math.random() * 8 + 4}px;
+      background: radial-gradient(circle, rgba(255,215,0,1), rgba(255,182,193,0.8));
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10001;
+      box-shadow: 0 0 15px rgba(255,215,0,0.8);
+      left: ${centerX}px;
+      top: ${centerY}px;
+    `;
+    
+    document.body.appendChild(sparkle);
+    
+    const angle = (i / 15) * Math.PI * 2;
+    const velocity = Math.random() * 200 + 100;
+    const vx = Math.cos(angle) * velocity;
+    const vy = Math.sin(angle) * velocity;
+    
+    sparkle.animate([
+      { 
+        transform: 'translate(0, 0) scale(1) rotate(0deg)', 
+        opacity: 1 
+      },
+      { 
+        transform: `translate(${vx}px, ${vy}px) scale(0) rotate(720deg)`, 
+        opacity: 0 
+      }
+    ], {
+      duration: Math.random() * 1500 + 800,
+      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    }).onfinish = () => sparkle.remove();
+  }
+}
+
+// Create cosmic explosion effect
+function createCosmicExplosion() {
+  const colors = [
+    'rgba(255,215,0,0.8)',
+    'rgba(255,182,193,0.8)',
+    'rgba(135,206,235,0.8)',
+    'rgba(221,160,221,0.8)'
+  ];
+  
+  for (let i = 0; i < 25; i++) {
+    const particle = document.createElement('div');
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    particle.style.cssText = `
+      position: fixed;
+      width: ${Math.random() * 6 + 2}px;
+      height: ${Math.random() * 6 + 2}px;
+      background: ${color};
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10002;
+      box-shadow: 0 0 20px ${color};
+      left: 50%;
+      top: 50%;
+    `;
+    
+    document.body.appendChild(particle);
+    
+    const angle = (i / 25) * Math.PI * 2;
+    const velocity = Math.random() * 300 + 150;
+    const vx = Math.cos(angle) * velocity;
+    const vy = Math.sin(angle) * velocity;
+    
+    particle.animate([
+      { 
+        transform: 'translate(-50%, -50%) scale(1)', 
+        opacity: 1 
+      },
+      { 
+        transform: `translate(calc(-50% + ${vx}px), calc(-50% + ${vy}px)) scale(0)`, 
+        opacity: 0 
+      }
+    ], {
+      duration: Math.random() * 2000 + 1000,
+      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    }).onfinish = () => particle.remove();
+  }
+}
+
+// Enhanced music functionality
+let globalAudio = null;
+let globalIsPlaying = false;
+
+function initEnhancedMusic() {
+  const soundToggle = document.getElementById('sound-toggle');
+  const audioElement = document.getElementById('background-audio');
+  
+  if (!soundToggle) return;
+  
+  // Use HTML audio element for better compatibility
+  globalAudio = audioElement || new Audio('Bgm.mp4');
+  globalAudio.volume = 0.3;
+  globalAudio.loop = true;
+  globalAudio.currentTime = 0;
+  
+  // Set initial state
+  globalIsPlaying = true;
+  soundToggle.classList.add('active');
+  
+  // Immediate play attempt with multiple strategies
+  const attemptAutoPlay = async () => {
+    // Strategy 1: Direct play
+    try {
+      await globalAudio.play();
+      console.log('Audio started automatically');
+      return;
+    } catch (e) {
+      console.log('Direct play blocked');
+    }
+    
+    // Strategy 2: Muted autoplay then unmute
+    try {
+      globalAudio.muted = true;
+      await globalAudio.play();
+      setTimeout(() => {
+        globalAudio.muted = false;
+        console.log('Audio started via muted autoplay');
+      }, 100);
+      return;
+    } catch (e) {
+      console.log('Muted autoplay blocked');
+    }
+    
+    // Strategy 3: Wait for ANY user interaction
+    const startAudio = async () => {
+      try {
+        globalAudio.muted = false;
+        globalAudio.currentTime = 0;
+        await globalAudio.play();
+        globalIsPlaying = true;
+        soundToggle.classList.add('active');
+        console.log('Audio started after interaction');
+      } catch (err) {
+        console.log('Audio failed even after interaction');
+      }
+    };
+    
+    // Listen for multiple interaction types
+    const interactions = ['click', 'keydown', 'touchstart', 'mousemove', 'scroll', 'mousedown'];
+    const cleanup = () => {
+      interactions.forEach(event => {
+        document.removeEventListener(event, startAudio);
+      });
+    };
+    
+    interactions.forEach(event => {
+      document.addEventListener(event, () => {
+        startAudio();
+        cleanup();
+      }, { once: true });
+    });
+  };
+  
+  // Start audio immediately
+  attemptAutoPlay();
+  
+  // Music toggle functionality
+  soundToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (globalIsPlaying) {
+      globalAudio.pause();
+      globalIsPlaying = false;
+      soundToggle.classList.remove('active');
+    } else {
+      globalAudio.play().then(() => {
+        globalIsPlaying = true;
+        soundToggle.classList.add('active');
+      }).catch(console.error);
+    }
+  });
+  
+  // Audio event handlers
+  globalAudio.addEventListener('play', () => {
+    globalIsPlaying = true;
+    soundToggle.classList.add('active');
+  });
+  
+  globalAudio.addEventListener('pause', () => {
+    globalIsPlaying = false;
+    soundToggle.classList.remove('active');
+  });
+  
+  globalAudio.addEventListener('ended', () => {
+    globalAudio.currentTime = 0;
+    globalAudio.play();
+  });
+}
+
+// Registration Countdown Timer Functionality
+function initRegistrationCountdown() {
+  // Set the registration deadline - modify this date as needed
+  const registrationDeadline = new Date('2025-09-07T23:59:59').getTime(); // September 7, 2025 11:59 PM
+  const countdownElement = document.getElementById('registration-countdown');
+  const registrationBtn = document.getElementById('registration-btn');
+  
+  function updateRegistrationCountdown() {
+    const now = new Date().getTime();
+    const distance = registrationDeadline - now;
+    
+    if (distance > 0) {
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      // Update countdown with animation
+      updateTimeWithAnimation('reg-days', days);
+      updateTimeWithAnimation('reg-hours', hours);
+      updateTimeWithAnimation('reg-minutes', minutes);
+      updateTimeWithAnimation('reg-seconds', seconds);
+      
+      // Enable registration button
+      if (registrationBtn) {
+        registrationBtn.disabled = false;
+        registrationBtn.querySelector('.btn-text').textContent = 'Fill Participation Form';
+      }
+    } else {
+      // Registration deadline has passed
+      countdownElement.classList.add('closed');
+      document.querySelector('.countdown-title').innerHTML = '⛔ Registration Closed!';
+      document.querySelector('.countdown-title').classList.add('registration-closed');
+      
+      // Hide countdown timer
+      document.querySelector('.countdown-timer').style.display = 'none';
+      
+      // Disable registration button
+      if (registrationBtn) {
+        registrationBtn.disabled = true;
+        registrationBtn.querySelector('.btn-text').textContent = 'Form Closed';
+      }
+    }
+  }
+  
+  function updateTimeWithAnimation(elementId, value) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      const currentValue = element.textContent;
+      const newValue = value.toString().padStart(2, '0');
+      
+      if (currentValue !== newValue) {
+        element.classList.add('updating');
+        setTimeout(() => {
+          element.textContent = newValue;
+          element.classList.remove('updating');
+        }, 300);
+      }
+    }
+  }
+  
+  // Update immediately and then every second
+  updateRegistrationCountdown();
+  setInterval(updateRegistrationCountdown, 1000);
+}
+
+// Initialize audio immediately when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  // Pre-initialize audio as early as possible
+  if (!globalAudio) {
+    globalAudio = new Audio('Bgm.mp4');
+    globalAudio.loop = true;
+    globalAudio.volume = 0.3;
+    globalAudio.preload = 'auto';
+    globalAudio.currentTime = 0;
+    
+    // Add audio element to DOM to help with auto-play
+    globalAudio.muted = true; // Start muted to bypass auto-play restrictions
+    document.body.appendChild(globalAudio);
+    
+    // Try to play immediately
+    globalAudio.play().then(() => {
+      // Unmute after successful play
+      globalAudio.muted = false;
+      globalIsPlaying = true;
+      console.log('Audio started on DOM ready');
+    }).catch(() => {
+      console.log('Audio blocked on DOM ready, will try again');
+      // Try alternative approach
+      globalAudio.muted = false;
+    });
+  }
+});
+
 // Enhanced loading sequence with mobile optimization
 window.addEventListener("load", () => {
   const mobile = isMobileDevice();
+  const loadingElement = document.getElementById("loading");
+  const mainElement = document.getElementById("main");
   
   // Apply mobile optimizations immediately
   optimizeForMobile();
   
-  // Drastically reduce particle count on mobile to prevent flickering
-  const particleCount = mobile ? 0 : 10;
-  for (let i = 0; i < particleCount; i++) {
-    setTimeout(createParticle, i * 100);
-  }
-  
+  // Show loading screen for 2-3 seconds
   setTimeout(() => {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("main").classList.remove("hidden");
+    // Fade out loading screen
+    loadingElement.classList.add('fade-out');
     
-    // Only initialize particle system on desktop
-    if (!mobile) {
-      const particleCanvas = document.getElementById('particle-canvas');
-      if (particleCanvas) {
-        new ParticleSystem(particleCanvas);
+    // After fade out completes, show main content
+    setTimeout(() => {
+      loadingElement.style.display = "none";
+      mainElement.classList.remove("hidden");
+      mainElement.classList.add('fade-in');
+      
+      // Show registration countdown after main content loads
+      setTimeout(() => {
+        const registrationCountdown = document.getElementById('registration-countdown');
+        if (registrationCountdown) {
+          registrationCountdown.classList.add('show');
+        }
+      }, 500);
+      
+      // Initialize registration countdown
+      initRegistrationCountdown();
+      
+      // Initialize modal
+      initModal();
+      
+      // Initialize enhanced music
+      initEnhancedMusic();
+      
+      // Only initialize particle system on desktop
+      if (!mobile) {
+        const particleCanvas = document.getElementById('particle-canvas');
+        if (particleCanvas) {
+          new ParticleSystem(particleCanvas);
+        }
+        
+        // Initialize cursor trail only on desktop
+        if (typeof CursorTrail !== 'undefined') {
+          new CursorTrail();
+        }
       }
       
-      // Initialize cursor trail only on desktop
-      if (typeof CursorTrail !== 'undefined') {
-        new CursorTrail();
+      // Initialize magnetic button
+      initMagneticButton();
+      
+      // Initialize sound toggle
+      initSoundToggle();
+      
+      // Animate letters only on desktop to prevent flickering
+      if (!mobile) {
+        setTimeout(() => {
+          animateLetters();
+        }, 500);
       }
-    }
-    
-    // Initialize magnetic button
-    initMagneticButton();
-    
-    // Initialize sound toggle
-    initSoundToggle();
-    
-    // Animate letters only on desktop to prevent flickering
-    if (!mobile) {
-      setTimeout(() => {
-        animateLetters();
-      }, 500);
-    }
-    
-    // Start word-by-word animation for intro (simplified on mobile)
-    const introElement = document.getElementById('animated-intro');
-    if (introElement) {
-      setTimeout(() => {
-        if (mobile) {
-          // Simple fade-in on mobile instead of complex animation
-          introElement.textContent = "An unforgettable night awaits you at Celestia'25, where stars meet celebration and memories shine bright.";
-          introElement.style.opacity = '1';
-        } else {
-          animateWordsWithDelay(introElement, "An unforgettable night awaits you at Celestia'25, where stars meet celebration and memories shine bright.", 150);
-        }
-      }, mobile ? 800 : 1200);
-    }
-    
-    // Animate subtitle (simplified on mobile)
-    const subtitleElement = document.getElementById('animated-subtitle');
-    if (subtitleElement) {
-      setTimeout(() => {
-        subtitleElement.style.opacity = '1';
-        if (!mobile) {
-          subtitleElement.style.transform = 'translateX(0)';
-        }
-      }, mobile ? 800 : 1500);
-    }
-    
-  }, mobile ? 1000 : 3000);
+      
+      // Start word-by-word animation for intro (simplified on mobile)
+      const introElement = document.getElementById('animated-intro');
+      if (introElement) {
+        setTimeout(() => {
+          if (mobile) {
+            // Simple fade-in on mobile instead of complex animation
+            introElement.textContent = "An unforgettable night awaits you at Celestia'25, where the ordinary ends, stars descend and memories shine bright.";
+            introElement.style.opacity = '1';
+          } else {
+            animateWordsWithDelay(introElement, "An unforgettable night awaits you at Celestia'25, where the ordinary ends, stars descend and memories shine bright.", 150);
+          }
+        }, mobile ? 800 : 1200);
+      }
+      
+      // Animate subtitle (simplified on mobile)
+      const subtitleElement = document.getElementById('animated-subtitle');
+      if (subtitleElement) {
+        setTimeout(() => {
+          subtitleElement.style.opacity = '1';
+          if (!mobile) {
+            subtitleElement.style.transform = 'translateX(0)';
+          }
+        }, mobile ? 800 : 1500);
+      }
+      
+    }, 800); // Wait for fade out animation
+  }, mobile ? 2000 : 3000); // Loading duration
 });
 
 // Create particles continuously with mobile optimization
@@ -510,59 +924,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  if (btn) {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      
-      // Create advanced explosion effect
-      for (let i = 0; i < 20; i++) {
-        const spark = document.createElement('div');
-        spark.style.cssText = `
-          position: fixed;
-          width: ${Math.random() * 6 + 2}px;
-          height: ${Math.random() * 6 + 2}px;
-          background: rgba(255,255,255,${Math.random() * 0.8 + 0.2});
-          border-radius: 50%;
-          pointer-events: none;
-          z-index: 10000;
-          box-shadow: 0 0 10px rgba(255,255,255,0.5);
-        `;
-        
-        const rect = btn.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        spark.style.left = centerX + 'px';
-        spark.style.top = centerY + 'px';
-        
-        document.body.appendChild(spark);
-        
-        const angle = (i / 20) * Math.PI * 2;
-        const velocity = Math.random() * 150 + 50;
-        const vx = Math.cos(angle) * velocity;
-        const vy = Math.sin(angle) * velocity;
-        
-        spark.animate([
-          { 
-            transform: 'translate(0, 0) scale(1) rotate(0deg)', 
-            opacity: 1 
-          },
-          { 
-            transform: `translate(${vx}px, ${vy}px) scale(0) rotate(360deg)`, 
-            opacity: 0 
-          }
-        ], {
-          duration: Math.random() * 1000 + 500,
-          easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-        }).onfinish = () => spark.remove();
-      }
-      
-      // Delayed navigation
-      setTimeout(() => {
-        window.open(btn.href, '_blank');
-      }, 300);
-    });
-  }
+  // Button functionality now handled by modal system
   
   // Interactive letter effects
   const letters = document.querySelectorAll('.title .letter');

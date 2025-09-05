@@ -4,18 +4,49 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Celestia'25</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon.svg">
+  
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="loading">
     <h1>Celestia'25 Loading<span class="dots">...</span></h1>
-    <div class="loader-lines">
-      <div></div><div></div><div></div>
+    <div class="cosmic-spinner">
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring"></div>
+      <div class="spinner-core">✦</div>
     </div>
   </div>
 
   <div id="main" class="hidden">
+    <!-- Enhanced Starry Night Sky -->
+    <div class="starry-sky"></div>
+    
+    <!-- Shooting Stars -->
+    <div class="shooting-stars">
+      <div class="shooting-star"></div>
+      <div class="shooting-star"></div>
+      <div class="shooting-star"></div>
+      <div class="shooting-star"></div>
+    </div>
+    
+    <!-- Floating Cosmic Elements -->
+    <div class="floating-cosmic-elements">
+      <div class="cosmic-element musical-note">♪</div>
+      <div class="cosmic-element star-glow">✦</div>
+      <div class="cosmic-element planet"></div>
+      <div class="cosmic-element musical-note">♫</div>
+      <div class="cosmic-element star-glow">✧</div>
+      <div class="cosmic-element planet"></div>
+    </div>
+    
     <!-- Advanced background effects -->
     <div class="bg-effects">
       <div class="aurora"></div>
@@ -75,7 +106,7 @@
         </div>
         
         <div class="subtitle-wrapper">
-          <p class="subtitle" id="animated-subtitle">Where Dreams Meet Reality</p>
+          <p class="subtitle" id="animated-subtitle">Where Magic Finds You</p>
         </div>
         
         <div class="intro-wrapper">
@@ -84,12 +115,12 @@
         
         <div class="action-wrapper">
           <div class="cta-container">
-            <a href="https://forms.gle/H9TGUXd9tRy6yY9V6" target="_blank" class="magnetic-btn">
+            <button class="magnetic-btn" id="main-btn">
               <span class="btn-text">Join The Experience</span>
               <div class="btn-glow"></div>
               <div class="btn-particles"></div>
               <div class="btn-ripple"></div>
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -97,6 +128,38 @@
     
     <!-- Interactive cursor trail -->
     <canvas id="cursor-canvas"></canvas>
+    
+    <!-- Registration Countdown Timer -->
+    <div class="registration-countdown" id="registration-countdown">
+      <div class="countdown-title">Time left to register:</div>
+      <div class="countdown-timer">
+        <div class="time-unit">
+          <span class="time-number" id="reg-days">00</span>
+          <span class="time-label">Days</span>
+        </div>
+        <span class="time-separator">:</span>
+        <div class="time-unit">
+          <span class="time-number" id="reg-hours">00</span>
+          <span class="time-label">Hours</span>
+        </div>
+        <span class="time-separator">:</span>
+        <div class="time-unit">
+          <span class="time-number" id="reg-minutes">00</span>
+          <span class="time-label">Minutes</span>
+        </div>
+        <span class="time-separator">:</span>
+        <div class="time-unit">
+          <span class="time-number" id="reg-seconds">00</span>
+          <span class="time-label">Seconds</span>
+        </div>
+      </div>
+      <div class="registration-button-container">
+        <button class="registration-btn" id="registration-btn">
+          <span class="btn-text">Fill Participation Form</span>
+          <div class="btn-glow"></div>
+        </button>
+      </div>
+    </div>
     
     <!-- Enhanced UI Elements -->
     <div class="ui-elements">
@@ -110,6 +173,27 @@
         </div>
       </div>
       
+    </div>
+    
+    <!-- Hidden audio element for better browser compatibility -->
+    <audio id="background-audio" preload="auto" loop>
+      <source src="Bgm.mp4" type="audio/mp4">
+    </audio>
+    
+    <!-- Modal for button click -->
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal-content">
+        <button class="modal-close" id="modal-close">&times;</button>
+        <h2 class="modal-title">🚀 Celestia'25 Awaits! ✨</h2>
+        <p class="modal-message">Get ready for the cosmic night! Fill this form to join the experience 🚀✨</p>
+        <div class="modal-buttons">
+          <a href="https://forms.gle/H9TGUXd9tRy6yY9V6" target="_blank" class="modal-btn modal-btn-primary" id="form-btn">Join The Galaxy</a>
+          <button class="modal-btn modal-btn-secondary" id="cancel-btn">Maybe Later</button>
+        </div>
+        <div class="developer-credits">
+          <p>Developed by Raj Vardhan & Shivam Thakur</p>
+        </div>
+      </div>
     </div>
   </div>
 
