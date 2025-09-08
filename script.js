@@ -654,7 +654,7 @@ function initEnhancedMusic() {
 // Registration Countdown Timer Functionality
 function initRegistrationCountdown() {
   // Set the registration deadline - modify this date as needed
-  const registrationDeadline = new Date('2025-09-07T23:59:59').getTime(); // September 7, 2025 11:59 PM
+  const registrationDeadline = new Date('2025-09-10T23:59:59').getTime(); // September 10, 2025 11:59 PM
   const countdownElement = document.getElementById('registration-countdown');
   const registrationBtn = document.getElementById('registration-btn');
   

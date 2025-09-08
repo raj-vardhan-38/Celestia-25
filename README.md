@@ -6,7 +6,6 @@ A stunning, cosmic-themed website for the Celestia'25 fresher's party event, fea
 
 ### 🎭 Loading Experience
 - **Cosmic Loading Screen**: Beautiful orange-golden themed loading screen with animated spinner
-- **Smooth Transitions**: Elegant fade-in/fade-out animations between loading and main content
 - **Mobile Optimized**: Responsive loading animations for all devices
 
 ### ⏰ Registration Countdown
@@ -21,7 +20,6 @@ A stunning, cosmic-themed website for the Celestia'25 fresher's party event, fea
 - **Interactive Cursor Trail**: Glowing particle trail following mouse movement (desktop)
 - **Magnetic Buttons**: Hover effects with 3D transformations
 - **Constellation Lines**: Animated constellation patterns
-- **Aurora Effects**: Ambient background lighting effects
 
 ### 🎵 Interactive Elements
 - **Sound Toggle**: Ambient cosmic sound effects with visual feedback
